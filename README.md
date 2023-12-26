@@ -1,16 +1,6 @@
-# Kerbrute
-[![CircleCI](https://circleci.com/gh/ropnop/kerbrute.svg?style=svg)](https://circleci.com/gh/ropnop/kerbrute)
-
-A tool to quickly bruteforce and enumerate valid Active Directory accounts through Kerberos Pre-Authentication
-
-Grab the latest binaries from the [releases page](https://github.com/ropnop/kerbrute/releases/latest) to get started.
-
-## Background
-This tool grew out of some [bash scripts](https://github.com/ropnop/kerberos_windows_scripts) I wrote a few years ago to perform bruteforcing using the Heimdal Kerberos client from Linux. I wanted something that didn't require privileges to install a Kerberos client, and when I found the amazing pure Go implementation of Kerberos [gokrb5](https://github.com/jcmturner/gokrb5), I decided to finally learn Go and write this. 
-
-Bruteforcing Windows passwords with Kerberos is much faster than any other approach I know of, and potentially stealthier since pre-authentication failures do not trigger that "traditional" `An account failed to log on` event 4625. With Kerberos, you can validate a username or test a login by only sending one UDP frame to the KDC (Domain Controller)
-
-For more background and information, check out my Troopers 2019 talk, Fun with LDAP and Kerberos (link TBD)
+# Kerbrute(FORK)
+Fork of https://github.com/ropnop/kerbrute with some new features to brute force valid usernames.
+- **userenum** now has new flag file and dynamic. Using file you can pass a list of usernames to test. Using dynamic flag you can indicate a list of names and surnames and the tool will test a set of corp usernames patterns like jorgeduran, jduran, ...
 
 ## Usage
 Kerbrute has three main commands:
@@ -76,7 +66,8 @@ Use "kerbrute [command] --help" for more information about a command.
 To enumerate usernames, Kerbrute sends TGT requests with no pre-authentication. If the KDC responds with a `PRINCIPAL UNKNOWN` error, the username does not exist. However, if the KDC prompts for pre-authentication, we know the username exists and we move on. This does not cause any login failures so it will not lock out any accounts. This generates a Windows event ID [4768](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4768) if Kerberos logging is enabled.
 
 ```
-root@kali:~# ./kerbrute_linux_amd64 userenum -d lab.ropnop.com usernames.txt
+root@kali:~# ./kerbrute_linux_amd64 userenum -d lab.ropnop.com file usernames.txt
+root@kali:~# ./kerbrute_linux_amd64 userenum -d lab.ropnop.com dynamic names.txt surnames.txt big
 
     __             __               __
    / /_____  _____/ /_  _______  __/ /____
